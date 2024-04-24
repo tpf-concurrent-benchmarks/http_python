@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from src import users
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.get("/healthcheck")
+def healthcheck():
+    return {"status": "ok"}
+
+app.include_router(users.router)
