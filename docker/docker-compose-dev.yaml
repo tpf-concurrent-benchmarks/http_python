@@ -76,6 +76,7 @@ services:
     image: http_python_dev
     volumes:
       - "../src:/opt/app/src:ro"
+      - "../.env:/opt/app/.env:ro"
     ports:
       - "9999:80"
     deploy:
