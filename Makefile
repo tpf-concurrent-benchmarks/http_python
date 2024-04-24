@@ -2,10 +2,13 @@
 create_directories:
 	mkdir -p graphite
 
+copy_env:
+	cp .env.example .env
+
 init:
 	docker swarm init || true
 
-setup: init create_directories
+setup: init create_directories copy_env
 
 build:
 	docker rmi http_python -f || true
@@ -38,6 +41,6 @@ dev_deploy: remove dev_build
 
 logs:
 	docker service logs http_python_app -f
-	
+
 run_local:
 	uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload-dir src --reload
