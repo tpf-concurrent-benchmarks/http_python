@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src import users, polls, votes
+from src.endpoints import users, polls, votes
 
 app = FastAPI()
 

@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from src.models.user import User
 from src.models.poll import PollInDB, PollWithVotes
-from src.models.vote import Vote
 from src.jwt import get_user_from_token
-from src.polls import get_poll_in_db
 from src.database import db
+from src import utils
 
 router = APIRouter()
 
@@ -19,7 +18,7 @@ async def update_vote(poll: PollInDB, username: str, old_option: int, new_option
         await db.add_vote(poll.id, username, new_option)
 
 @router.post("/api/polls/vote")
-async def vote(token: Annotated[User, Depends(get_user_from_token)], poll: Annotated[PollInDB, Depends(get_poll_in_db)], option: int):
+async def vote(token: Annotated[User, Depends(get_user_from_token)], poll: Annotated[PollInDB, Depends(utils.get_poll_in_db)], option: int):
     if option < 0 or option >= len(poll.options):
         raise HTTPException(status_code=400, detail="Invalid option")
     
