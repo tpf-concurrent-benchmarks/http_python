@@ -1,12 +1,14 @@
 from src.models.poll import PollInDB, Poll, PollWithVotes
 from src.models.user import UserInDB
 from src.database.database import DataBase
+from src.models.vote import Vote
 from typing import List
 
 class InMemoryDataBase(DataBase):
     def __init__(self):
         self.users = {}
         self.polls = {}
+        self.votes = {}
         self.next_poll_id = 1
 
     async def get_user(self, username: str) -> UserInDB | None:
@@ -27,6 +29,12 @@ class InMemoryDataBase(DataBase):
         self.next_poll_id += 1
         return poll_id
     
+    async def update_poll(self, poll_id: int, poll: PollWithVotes) -> bool:
+        if poll_id in self.polls:
+            self.polls[poll_id] = poll.dict()
+            return True
+        return False
+    
     async def get_poll(self, poll_id: int) -> PollInDB | None:
         if poll_id in self.polls:
             poll_dict = self.polls[poll_id]
@@ -39,3 +47,16 @@ class InMemoryDataBase(DataBase):
             poll = PollInDB(id=poll_id, **poll_dict)
             polls.append(poll)
         return polls
+    
+    async def add_vote(self, vote: Vote) -> bool:
+        self.votes[(vote.poll_id, vote.username)] = vote.option
+        return True
+    
+    async def get_vote(self, poll_id: int, username: str) -> int | None:
+        return self.votes.get((poll_id, username), None)
+    
+    async def remove_vote(self, poll_id: int, username: str) -> bool:
+        if (poll_id, username) in self.votes:
+            del self.votes[(poll_id, username)]
+            return True
+        return False

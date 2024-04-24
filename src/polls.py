@@ -15,12 +15,15 @@ def transform_poll_in_db(poll: PollInDB) -> Poll:
     options = [option.name for option in poll.options]
     return Poll(title=poll.title, options=options)
 
-@router.get("/api/polls/{poll_id}", response_model=PollInDB)
-async def get_poll(poll_id: int, token: Annotated[User, Depends(get_user_from_token)]) -> PollInDB:
+async def get_poll_in_db(poll_id: int) -> PollInDB:
     poll = await db.get_poll(poll_id)
     if not poll:
         raise HTTPException(status_code=404, detail="Poll not found")
     return poll
+
+@router.get("/api/polls/{poll_id}", response_model=PollInDB)
+async def get_poll(poll_id: int, token: Annotated[User, Depends(get_user_from_token)]) -> PollInDB:
+    return await get_poll_in_db(poll_id)
 
 @router.post("/api/polls", response_model=int)
 async def create_poll(poll: Poll, token: Annotated[User, Depends(get_user_from_token)]) -> int:
