@@ -1,4 +1,4 @@
-from src.models.poll import Poll
+from src.models.poll import PollInDB, Poll, PollWithVotes
 from src.models.user import UserInDB
 from src.database.database import DataBase
 from typing import List
@@ -21,15 +21,21 @@ class InMemoryDataBase(DataBase):
         self.users[user.username] = user.dict()
         return True
     
-    async def add_poll(self, poll: Poll) -> int:
+    async def add_poll(self, poll: PollWithVotes) -> int:
         poll_id = self.next_poll_id
         self.polls[poll_id] = poll.dict()
         self.next_poll_id += 1
         return poll_id
     
-    async def get_poll(self, poll_id: int) -> Poll | None:
+    async def get_poll(self, poll_id: int) -> PollInDB | None:
         if poll_id in self.polls:
             poll_dict = self.polls[poll_id]
-            return Poll(**poll_dict)
+            return PollInDB(id=poll_id, **poll_dict)
         return None
     
+    async def get_polls(self) -> List[PollInDB]:
+        polls = []
+        for poll_id, poll_dict in self.polls.items():
+            poll = PollInDB(id=poll_id, **poll_dict)
+            polls.append(poll)
+        return polls
