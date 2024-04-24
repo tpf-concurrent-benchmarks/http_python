@@ -26,12 +26,10 @@ async def vote(token: Annotated[User, Depends(get_user_from_token)], poll: Annot
     
     old_option = await db.get_vote(poll.id, token.username)
     if old_option is not None:
-        print("Updating vote")
         await update_vote(poll, token.username, old_option, option)
         poll_with_votes = PollWithVotes(title=poll.title, options=poll.options)
         await db.update_poll(poll.id, poll_with_votes)
     else:
-        print("Adding vote")
         poll.options[option].votes += 1
         vote = Vote(poll_id=poll.id, username=token.username, option=option)
         await db.add_vote(vote)
