@@ -10,7 +10,7 @@ from src.models.user import User
 
 load_dotenv()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 class JWTManager:
     def __init__(self):
@@ -38,7 +38,8 @@ class JWTManager:
 jwt_manager = JWTManager()
 
 def get_user_from_token(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+    print("Received token", token)
     payload = jwt_manager.decode_jwt_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid token")
-    return User(**payload)
+    return User(username=payload.get("sub"))

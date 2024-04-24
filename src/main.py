@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src import users
+from src import users, polls
 
 app = FastAPI()
 
@@ -8,3 +8,4 @@ def healthcheck():
     return {"status": "ok"}
 
 app.include_router(users.router)
+app.include_router(polls.router)
