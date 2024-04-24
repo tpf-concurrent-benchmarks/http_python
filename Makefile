@@ -3,7 +3,9 @@ create_directories:
 	mkdir -p graphite
 
 copy_env:
-	cp .env.example .env
+	if [ ! -f .env ]; then \
+		cp .env.example .env; \
+	fi
 
 init:
 	docker swarm init || true
