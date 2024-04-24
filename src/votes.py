@@ -16,8 +16,7 @@ async def update_vote(poll: PollInDB, username: str, old_option: int, new_option
     else:
         poll.options[old_option].votes -= 1
         poll.options[new_option].votes += 1
-        vote = Vote(poll_id=poll.id, username=username, option=new_option)
-        await db.add_vote(vote)
+        await db.add_vote(poll.id, username, new_option)
 
 @router.post("/api/polls/vote")
 async def vote(token: Annotated[User, Depends(get_user_from_token)], poll: Annotated[PollInDB, Depends(get_poll_in_db)], option: int):
@@ -31,8 +30,7 @@ async def vote(token: Annotated[User, Depends(get_user_from_token)], poll: Annot
         await db.update_poll(poll.id, poll_with_votes)
     else:
         poll.options[option].votes += 1
-        vote = Vote(poll_id=poll.id, username=token.username, option=option)
-        await db.add_vote(vote)
+        await db.add_vote(poll.id, token.username, option)
         poll_with_votes = PollWithVotes(title=poll.title, options=poll.options)
         await db.update_poll(poll.id, poll_with_votes)
     

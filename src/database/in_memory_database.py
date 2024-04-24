@@ -48,8 +48,8 @@ class InMemoryDataBase(DataBase):
             polls.append(poll)
         return polls
     
-    async def add_vote(self, vote: Vote) -> bool:
-        self.votes[(vote.poll_id, vote.username)] = vote.option
+    async def add_vote(self, poll_id: int, username: str, option: int) -> bool:
+        self.votes[(poll_id, username)] = option
         return True
     
     async def get_vote(self, poll_id: int, username: str) -> int | None:

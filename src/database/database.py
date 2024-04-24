@@ -23,7 +23,7 @@ class DataBase(ABC):
         pass
 
     @abstractmethod
-    async def update_poll(self, poll: PollWithVotes) -> bool:
+    async def update_poll(self, poll_id: int, poll: PollWithVotes) -> bool:
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class DataBase(ABC):
         pass
 
     @abstractmethod
-    async def add_vote(self, vote: Vote) -> bool:
+    async def add_vote(self, poll_id: int, username: str, option: int) -> bool:
         pass
 
     @abstractmethod
