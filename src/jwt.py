@@ -38,7 +38,6 @@ class JWTManager:
 jwt_manager = JWTManager()
 
 def get_user_from_token(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
-    print("Received token", token)
     payload = jwt_manager.decode_jwt_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid token")
