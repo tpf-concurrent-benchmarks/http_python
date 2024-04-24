@@ -36,5 +36,8 @@ dev_deploy: remove dev_build
 	do sleep 1; \
 	done
 
+logs:
+	docker service logs http_python_app -f
+	
 run_local:
 	uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload-dir src --reload
