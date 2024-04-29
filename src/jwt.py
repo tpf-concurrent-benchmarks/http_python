@@ -41,4 +41,6 @@ def get_user_from_token(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
     payload = jwt_manager.decode_jwt_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid token")
+    if datetime.fromtimestamp(payload.get("exp"), tz=timezone.utc) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=401, detail="Token has expired")
     return User(username=payload.get("sub"))
