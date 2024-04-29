@@ -15,3 +15,6 @@ class PollInDB(PollWithVotes):
 class Poll(BaseModel):
     title: str
     options: List[str]
+
+class PollGet(Poll):
+    id: int

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from src.models.poll import Poll,PollInDB, PollWithVotes, Option
+from src.models.poll import Poll,PollInDB, PollWithVotes, Option, PollGet
 from src.database import db
 from src.jwt import get_user_from_token
 from src.models.user import User
@@ -12,9 +12,9 @@ def create_poll_with_votes(poll: Poll) -> PollWithVotes:
     options = [Option(name=option, votes=0) for option in poll.options]
     return PollWithVotes(title=poll.title, options=options)
 
-def transform_poll_in_db(poll: PollInDB) -> Poll:
+def transform_poll_in_db(poll: PollInDB) -> PollGet:
     options = [option.name for option in poll.options]
-    return Poll(title=poll.title, options=options)
+    return PollGet(id=poll.id, title=poll.title, options=options)
 
 @router.get("/api/polls/{poll_id}", response_model=PollInDB)
 async def get_poll(poll: Annotated[PollInDB, Depends(utils.get_poll_in_db)], token: Annotated[User, Depends(get_user_from_token)]) -> PollInDB:
@@ -26,7 +26,7 @@ async def create_poll(poll: Poll, token: Annotated[User, Depends(get_user_from_t
     poll_id = await db.add_poll(poll_with_votes)
     return poll_id
 
-@router.get("/api/polls", response_model=List[Poll])
+@router.get("/api/polls", response_model=List[PollGet])
 async def get_polls(token: Annotated[User, Depends(get_user_from_token)]) -> List[Poll]:
     polls = await db.get_polls()
     return [transform_poll_in_db(poll) for poll in polls]
