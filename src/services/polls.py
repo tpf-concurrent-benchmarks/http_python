@@ -10,8 +10,10 @@ from src.serializers.poll_options.full_poll_option import FullPollOptionSerializ
 
 class PollsService:
     def create(self, db: Session, user_id: int, poll_creation_serializer: PollCreationSerializer) -> PollCreationOutputSerializer:
-        options_strs = [option.name for option in poll_creation_serializer.options]
-        poll = PollModel.create(db, poll_creation_serializer.poll_topic, user_id, options_strs)
+        if len(poll_creation_serializer.options) < 2:
+            raise ValueError("A poll must have at least 2 options")
+        
+        poll = PollModel.create(db, poll_creation_serializer.poll_topic, user_id, poll_creation_serializer.options)
         return PollCreationOutputSerializer(poll_id=poll.poll_id, poll_topic=poll.poll_topic, options=poll_creation_serializer.options)
     
     def delete(self, db: Session, poll_id: int, requester_id: int):

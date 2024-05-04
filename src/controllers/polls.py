@@ -19,7 +19,11 @@ async def get_poll(poll_id: int, db: DbDependency):
 
 @router.post("/api/polls", response_model=PollCreationOutputSerializer)
 async def create_poll(poll_in: PollCreationSerializer, user_id: AuthDependency, db: DbDependency):
-    return polls_service.create(db, user_id, poll_in)
+    try:
+        poll = polls_service.create(db, user_id, poll_in)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return poll
 
 @router.get("/api/polls", response_model=List[PollPreviewSerializer])
 async def get_polls(db: DbDependency):
