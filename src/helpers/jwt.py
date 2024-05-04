@@ -3,8 +3,6 @@ from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import os
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
-
 class JWTManager:
     def __init__(self):
         self.secret_key = os.environ["SECRET_KEY"]
