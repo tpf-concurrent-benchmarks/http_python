@@ -1,11 +1,15 @@
-
 create_directories:
 	mkdir -p graphite
+	mkdir -p data
 
 copy_env:
 	if [ ! -f .env ]; then \
 		cp .env.example .env; \
 	fi
+
+# Requires the app to be running in a container
+tables:
+	docker ps | grep http_python_app | awk '{print $$1}' | xargs -I {} docker exec {} sh -c 'python3 -m src.create_tables'
 
 init:
 	docker swarm init || true
@@ -44,5 +48,17 @@ dev_deploy: remove dev_build
 logs:
 	docker service logs http_python_app -f
 
-run_local:
+run_local_dev:
 	uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload-dir src --reload
+
+run_local_prod:
+	uvicorn src.main:app --host 0.0.0.0 --port 8080
+
+node_modules:
+	cd artillery && npm install
+
+test_load_local:
+	./artillery/run_scenario.sh load local
+
+test_load_prod:
+	./artillery/run_scenario.sh load prod
