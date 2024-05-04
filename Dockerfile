@@ -1,7 +1,8 @@
 FROM python:3.10-alpine
 
-ENV HOST=0.0.0.0
-ENV PORT=80
+ARG N_WORKERS
+ARG APP_HOST
+ARG APP_PORT
 
 WORKDIR /opt/app
 
@@ -11,4 +12,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY src src
 
-CMD uvicorn src.main:app --host $HOST --port $PORT
+CMD gunicorn src.main:app -b ${APP_HOST}:${APP_PORT} --workers ${N_WORKERS} -k uvicorn.workers.UvicornWorker

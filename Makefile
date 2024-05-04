@@ -1,3 +1,5 @@
+include .env
+
 create_directories:
 	mkdir -p graphite
 	mkdir -p data
@@ -23,6 +25,7 @@ remove:
 
 deploy: remove build
 	until \
+	APP_HOST=${APP_HOST} APP_PORT=${APP_PORT} N_WORKERS=${N_WORKERS} \
 	docker stack deploy \
 	-c docker/docker-compose.yaml \
 	http_python; \
@@ -35,6 +38,7 @@ dev_build:
 
 dev_deploy: remove dev_build
 	until \
+	APP_HOST=${APP_HOST} APP_PORT=${APP_PORT} \
 	docker stack deploy \
 	-c docker/docker-compose-dev.yaml \
 	http_python; \
@@ -45,10 +49,10 @@ logs:
 	docker service logs http_python_app -f
 
 run_local_dev:
-	uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload-dir src --reload
+	uvicorn src.main:app --host localhost --port ${APP_PORT} --reload-dir src --reload
 
 run_local_prod:
-	uvicorn src.main:app --host 0.0.0.0 --port 8080
+	gunicorn src.main:app -b ${APP_HOST}:${APP_PORT} --workers ${N_WORKERS} -k uvicorn.workers.UvicornWorker
 
 node_modules:
 	cd artillery && npm install
