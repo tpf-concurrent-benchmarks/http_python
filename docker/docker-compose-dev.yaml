@@ -77,6 +77,7 @@ services:
     volumes:
       - "../src:/opt/app/src:ro"
       - "../.env:/opt/app/.env:ro"
+      - "../data:/opt/app/data:rw"
     ports:
       - "9999:80"
     deploy:
