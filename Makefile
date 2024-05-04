@@ -7,10 +7,6 @@ copy_env:
 		cp .env.example .env; \
 	fi
 
-# Requires the app to be running in a container
-tables:
-	docker ps | grep http_python_app | awk '{print $$1}' | xargs -I {} docker exec {} sh -c 'python3 -m src.create_tables'
-
 init:
 	docker swarm init || true
 
