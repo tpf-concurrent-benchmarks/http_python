@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
-from src.endpoints import users, polls, votes
+from src.controllers import users, polls, votes, sessions
 
 app = FastAPI()
 
@@ -8,5 +11,6 @@ def healthcheck():
     return {"status": "ok"}
 
 app.include_router(users.router)
+app.include_router(sessions.router)
 app.include_router(polls.router)
 app.include_router(votes.router)
