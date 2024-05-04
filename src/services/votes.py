@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from src.models.votes import VoteModel
 from src.models.polls import PollModel
-from src.serializers.vote import VoteSerializer
 
 class VotesService:
     def vote(self, db: Session, poll_id: int, user_id: int, option_num: int):

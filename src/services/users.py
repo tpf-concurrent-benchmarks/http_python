@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from src.models.users import UserModel
 from src.serializers.users.full_user import FullUserSerializer
@@ -11,10 +12,10 @@ class UsersService:
         return FullUserSerializer.from_orm(user)
     
     def create_user(self, db: Session, username: str, password: str) -> FullUserSerializer | None:
-        user = UserModel.find_by_username(db, username)
-        if user:
+        try:
+            user = UserModel.create(db, username, password)
+        except IntegrityError:
             return None
-        user = UserModel.create(db, username, password)
         return FullUserSerializer.from_orm(user)
     
     def get_authenticated(self, db: Session, username: str, password: str) -> FullUserSerializer | None:
