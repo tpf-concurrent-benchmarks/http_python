@@ -2,7 +2,7 @@
 
 ## Objective
 
-This is a python implementation of an HTTP polls server.
+This is a Python implementation of an HTTP polls server.
 
 ## Deployment
 
@@ -18,8 +18,6 @@ The following environment variables must be defined in the `.env` file:
 - `SECRET_KEY`: A secret key for encrypting the JWT tokens.
 - `ALGORITHM`: The algorithm used for encrypting the JWT tokens.
 - `ACCESS_TOKEN_EXPIRE_MINUTES`: The expiration time for the JWT tokens, in minutes.
-- `STATSD_HOST`: The host of the statsd server. Artillery will send metrics to this server.
-- `STATSD_PORT`: The port of the statsd server.
 - `APP_HOST`: The host of the application.
 - `APP_PORT`: The port of the application.
 - `DATABASE_URL`: The URL of the database to use. Currently, only SQLite is supported.
