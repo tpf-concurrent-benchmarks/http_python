@@ -1,18 +1,18 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.orm.session import Session
 from typing import List, Optional
 
 from src.models.poll_options import PollOptionModel
 from src.models import Base
-
+from src.models.users import UserModel
 
 class PollModel(Base):
     __tablename__ = "polls"
 
-    poll_id = Column(Integer, primary_key=True, index=True)
-    poll_topic = Column(String)
-    creator_id = Column(Integer, ForeignKey("users.user_id"))
+    poll_id: Mapped[int] = mapped_column(primary_key=True)
+    poll_topic: Mapped[str] = mapped_column()
+    creator_id: Mapped["UserModel"] = mapped_column(ForeignKey("users.user_id"))
 
     options: Mapped[List[PollOptionModel]] = relationship(cascade="all, delete-orphan", lazy="joined")
 

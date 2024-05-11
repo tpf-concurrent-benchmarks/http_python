@@ -6,7 +6,7 @@ from src.serializers.polls.poll_creation import PollCreationSerializer
 from src.serializers.polls.poll_creation_output import PollCreationOutputSerializer
 from src.serializers.polls.poll_preview import PollPreviewSerializer
 from src.serializers.polls.full_poll import FullPollSerializer
-from src.serializers.poll_options.full_poll_option import FullPollOptionSerializer
+from src.serializers.polls.all_polls import AllPollsSerializer
 
 class PollsService:
     def create(self, db: Session, user_id: int, poll_creation_serializer: PollCreationSerializer) -> PollCreationOutputSerializer:
@@ -25,9 +25,9 @@ class PollsService:
         
         PollModel.delete(db, poll_id)
     
-    def get_all(self, db: Session) -> List[PollPreviewSerializer]:
+    def get_all(self, db: Session) -> AllPollsSerializer:
         polls = PollModel.find_all(db)
-        return [PollPreviewSerializer.from_orm(poll) for poll in polls]
+        return AllPollsSerializer(polls=[PollPreviewSerializer.from_orm(poll) for poll in polls])
     
     def get(self, db: Session, poll_id: int) -> FullPollSerializer | None:
         poll = PollModel.find(db, poll_id)

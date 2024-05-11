@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.models.users import UserModel
 from src.serializers.users.full_user import FullUserSerializer
+from src.serializers.users.user_creation import UserCreationSerializer
 
 class UsersService:
     def get_user(self, db: Session, user_id: int) -> FullUserSerializer | None:
@@ -11,9 +12,9 @@ class UsersService:
             return None
         return FullUserSerializer.from_orm(user)
     
-    def create_user(self, db: Session, username: str, password: str) -> FullUserSerializer | None:
+    def create_user(self, db: Session, user_serializer: UserCreationSerializer) -> FullUserSerializer | None:
         try:
-            user = UserModel.create(db, username, password)
+            user = UserModel.create(db, user_serializer.username, user_serializer.password)
         except IntegrityError:
             return None
         return FullUserSerializer.from_orm(user)

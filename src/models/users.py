@@ -9,8 +9,8 @@ class UserModel(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    username = Column(String(30), unique=True, index=True)
+    hashed_password = Column(String(128))
     
     @staticmethod
     def find(db: Session, user_id: int) -> Optional["UserModel"]:
@@ -29,3 +29,7 @@ class UserModel(Base):
 
     def authenticate(self, password: str) -> bool:
         return hasher.verify_password(password, self.hashed_password)
+    
+    @staticmethod
+    def get_all(db: Session):
+        return db.query(UserModel).all()

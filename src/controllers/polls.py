@@ -6,7 +6,7 @@ from src.helpers.dependencies import AuthDependency, DbDependency
 from src.serializers.polls.full_poll import FullPollSerializer
 from src.serializers.polls.poll_creation import PollCreationSerializer
 from src.serializers.polls.poll_creation_output import PollCreationOutputSerializer
-from src.serializers.polls.poll_preview import PollPreviewSerializer
+from src.serializers.polls.all_polls import AllPollsSerializer
 
 router = APIRouter()    
 
@@ -25,7 +25,7 @@ async def create_poll(poll_in: PollCreationSerializer, user_id: AuthDependency, 
         raise HTTPException(status_code=400, detail=str(e))
     return poll
 
-@router.get("/api/polls", response_model=List[PollPreviewSerializer])
+@router.get("/api/polls", response_model=AllPollsSerializer)
 async def get_polls(db: DbDependency):
     return polls_service.get_all(db)
     

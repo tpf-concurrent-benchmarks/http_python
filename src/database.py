@@ -15,7 +15,7 @@ class DataBaseMeta(type):
 class DataBase(metaclass=DataBaseMeta):
     def __init__(self):
         url = os.getenv("DATABASE_URL")
-        self.__engine = create_engine(url, connect_args={"check_same_thread": False})
+        self.__engine = create_engine(url, pool_size=50, max_overflow=-1)
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
 
     def session(self) -> Session:
