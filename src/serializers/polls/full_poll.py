@@ -10,8 +10,8 @@ class FullPollSerializer(PollPreviewSerializer):
     @classmethod
     def from_model(cls, poll_model: PollModel) -> "FullPollSerializer":
         base_poll = PollPreviewSerializer.from_orm(poll_model)
-        votes_per_option = []
+        votes_per_option = [None for _ in poll_model.options]
         for option in poll_model.options:
-            votes_per_option.append(FullPollOptionSerializer(name=option.name, votes=option.count_votes()))
+            votes_per_option[option.option_num] = FullPollOptionSerializer(name=option.name, votes=option.count_votes())
         return cls(**base_poll.dict(), options=votes_per_option)
         
