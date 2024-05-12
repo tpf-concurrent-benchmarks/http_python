@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.11.9-alpine
 
 ARG N_WORKERS
 ARG APP_HOST

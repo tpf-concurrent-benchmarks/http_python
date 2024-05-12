@@ -1,7 +1,7 @@
-FROM python:3.10
+FROM python:3.11.9
 
-ARG HOST
-ARG PORT
+ARG APP_HOST
+ARG APP_PORT
 
 WORKDIR /opt/app
 
@@ -11,4 +11,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY src src
 
-CMD uvicorn src.main:app --host ${HOST} --port ${PORT} --reload
+CMD uvicorn src.main:app --host ${APP_HOST} --port ${APP_PORT} --reload
