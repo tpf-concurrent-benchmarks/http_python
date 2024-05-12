@@ -1,4 +1,12 @@
-include .env
+-include .env
+
+.EXPORT_ALL_VARIABLES:
+	APP_HOST=${APP_HOST}
+	APP_PORT=${APP_PORT}
+	N_WORKERS=${N_WORKERS}
+	POSTGRES_USER=${POSTGRES_USER}
+	POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+	POSTGRES_DB=${POSTGRES_DB}
 
 create_directories:
 	mkdir -p graphite
@@ -25,7 +33,6 @@ remove:
 
 deploy: remove build
 	until \
-	APP_HOST=${APP_HOST} APP_PORT=${APP_PORT} N_WORKERS=${N_WORKERS} \
 	docker stack deploy \
 	-c docker/docker-compose.yaml \
 	http_python; \
