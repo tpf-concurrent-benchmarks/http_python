@@ -14,13 +14,13 @@ router = APIRouter()
 
 
 @router.post("/api/users", response_model=TokenSerializer)
-def create_user(user_serializer: UserCreationSerializer,
-                db: Session = Depends(get_db)):
-    user = users_service.create_user(db, user_serializer)
+async def create_user(user_serializer: UserCreationSerializer,
+                      db: Session = Depends(get_db)):
+    user = await users_service.create_user(db, user_serializer)
     if not user:
         raise HTTPException(status_code=400, detail="User already exists")
     return sessions_service.create_token_for(user.user_id)
 
 @router.get("/api/users")
-def get_users(db: Session = Depends(get_db)):
-    return UserModel.get_all(db)
+async def get_users(db: Session = Depends(get_db)):
+    return await UserModel.get_all(db)

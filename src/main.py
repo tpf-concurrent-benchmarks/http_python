@@ -13,7 +13,8 @@ async def lifespan(app: FastAPI):
     retries = 5
     for i in range(retries):
         try:
-            Base.metadata.create_all(bind=db.engine())
+            async with db.engine().begin() as conn:
+                await conn.run_sync(Base.metadata.create_all)
             break
         except sqlalchemy.exc.OperationalError as e:
             if i == retries - 1:

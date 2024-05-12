@@ -1,10 +1,11 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, Mapped
-from sqlalchemy.orm.session import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from src.models import Base
 from src.models.votes import VoteModel
+import time
 
 class PollOptionModel(Base):
     __tablename__ = "poll_options"
@@ -21,10 +22,9 @@ class PollOptionModel(Base):
     )
     
     @staticmethod
-    def create(db: Session, poll_id: int, option_num: int, name: str) -> "PollOptionModel":
+    def create(db: AsyncSession, poll_id: int, option_num: int, name: str) -> "PollOptionModel":
         option = PollOptionModel(poll_id=poll_id, option_num=option_num, name=name)
         db.add(option)
-        db.flush()
         return option
     
     def count_votes(self) -> int:

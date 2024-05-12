@@ -80,11 +80,20 @@ services:
     volumes:
       - "../src:/opt/app/src:ro"
       - "../.env:/opt/app/.env:ro"
-      - type: bind
-        source: ../data
-        target: /opt/app/data
     ports:
       - "${APP_PORT}:80"
+    deploy:
+      restart_policy:
+        condition: none
+    
+  postgres:
+    image: postgres:16.2
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ../postgres_data:/var/lib/postgresql/data
     deploy:
       restart_policy:
         condition: none
@@ -92,3 +101,7 @@ services:
 volumes:
   grafana_config:
     external: true
+
+networks:
+  default:
+    attachable: true

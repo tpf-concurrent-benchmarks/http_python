@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, PrimaryKeyConstraint, ForeignKeyConstraint
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from typing import Optional
 
 from src.models import Base
@@ -18,20 +19,19 @@ class VoteModel(Base):
     )
     
     @staticmethod
-    def create(db: Session, poll_id: int, user_id: int, option_num: int) -> "VoteModel":
+    async def create(db: AsyncSession, poll_id: int, user_id: int, option_num: int) -> "VoteModel":
         vote = VoteModel(poll_id=poll_id, user_id=user_id, option_num=option_num)
         db.add(vote)
-        db.flush()
         return vote
     
     @staticmethod
-    def find(db: Session, poll_id: int, user_id: int) -> Optional["VoteModel"]:
-        return db.query(VoteModel).filter(VoteModel.poll_id == poll_id, VoteModel.user_id == user_id).first()
+    async def find(db: AsyncSession, poll_id: int, user_id: int) -> Optional["VoteModel"]:
+        return await db.get(VoteModel, (poll_id, user_id))
     
-    def delete(self, db: Session):
-        db.delete(self)
+    async def delete(self, db: AsyncSession):
+        await db.delete(self)
 
-    def update(self, db: Session, option_num: int):
+    async def update(self, db: AsyncSession, option_num: int):
         self.option_num = option_num
         db.add(self)
         return self

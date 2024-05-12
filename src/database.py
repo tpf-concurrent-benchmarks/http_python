@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncEngine
 import os
 
 class DataBaseMeta(type):
@@ -15,23 +15,23 @@ class DataBaseMeta(type):
 class DataBase(metaclass=DataBaseMeta):
     def __init__(self):
         url = os.getenv("DATABASE_URL")
-        self.__engine = create_engine(url, pool_size=50, max_overflow=-1)
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
+        self.__engine = create_async_engine(url, pool_size=50, max_overflow=-1)
+        self.SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=self.__engine)
 
-    def session(self) -> Session:
+    def session(self) -> AsyncSession:
         return self.SessionLocal()
     
-    def engine(self):
+    def engine(self) -> AsyncEngine:
         return self.__engine
             
 
-def get_db():
-    db = DataBase().session()
-    try:
-        yield db
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise e
-    finally:
-        db.close()
+async def get_db():
+    async with DataBase().session() as db:
+        try:
+            yield db
+            await db.commit()
+        except:
+            await db.rollback()
+            raise
+        finally:
+            await db.close()
