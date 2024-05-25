@@ -13,8 +13,8 @@ class PollsService:
         if len(poll_creation_serializer.options) < 2:
             raise ValueError("A poll must have at least 2 options")
         
-        poll = await PollModel.create(db, poll_creation_serializer.poll_topic, user_id, poll_creation_serializer.options)
-        return PollCreationOutputSerializer(poll_id=poll.poll_id, poll_topic=poll.poll_topic, options=poll_creation_serializer.options)
+        poll = await PollModel.create(db, poll_creation_serializer.title, user_id, poll_creation_serializer.options)
+        return PollCreationOutputSerializer(id=poll.poll_id)
     
     async def delete(self, db: AsyncSession, poll_id: int, requester_id: int):
         poll = await PollModel.find(db, poll_id)
