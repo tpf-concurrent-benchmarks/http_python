@@ -60,12 +60,3 @@ run_local_dev:
 
 run_local_prod:
 	gunicorn src.main:app -b ${APP_HOST}:${APP_PORT} --workers ${N_WORKERS} -k uvicorn.workers.UvicornWorker
-
-node_modules:
-	cd artillery && npm install
-
-test_load_local:
-	./artillery/run_scenario.sh load local
-
-test_load_prod:
-	./artillery/run_scenario.sh load prod
